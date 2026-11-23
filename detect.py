@@ -25,6 +25,11 @@ detections = sv.Detections.empty()
 cap = cv2.VideoCapture(0)
 box_annotator = sv.BoxAnnotator()
 
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+cv2.namedWindow("Detections", cv2.WINDOW_NORMAL)
+cv2.resizeWindow("Detections", 960, 540)
+
 
 while True:
     ref, frame = cap.read()
@@ -41,7 +46,11 @@ while True:
     
     annotated = box_annotator.annotate(frame.copy(), detections)
     cv2.imshow("Detections", annotated)
-    if cv2.waitKey(1) & 0xFF == ord("q"):
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord("s"):
+        cv2.imwrite("screenshot.png", frame)
+        print("Screenshot saved")
+    if key == ord("q"):
         break
 cv2.destroyAllWindows()
 cap.release()
