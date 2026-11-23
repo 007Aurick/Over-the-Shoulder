@@ -28,33 +28,37 @@ client = InferenceHTTPClient(
 )
 
 
-def inside(box, outer):
-    """True if the center of box is inside outer. Boxes are [x1, y1, x2, y2]."""
-    cx, cy = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
+def inside(box, outer):#checks if the small box is inside the outer box
+    cx, cy = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2 #calculates the center of the small box
     return outer[0] <= cx <= outer[2] and outer[1] <= cy <= outer[3]
+    #Every box is [x1, y1, x2, y2], so for a multiple choice question, we check the center.
+    #We use center instead of requiring the whole box to fit inside, because the circle box sometimes pokes slightly outside the question box.
+
 
 
 def detect(frame):
     """Run RF-DETR once and clean up the detections."""
-    result = client.infer(frame, model_id=MODEL_ID)
-    det = sv.Detections.from_inference(result)
-    det = det.with_nms(threshold=0.5)                       # drop same-class duplicates
+    result = client.infer(frame, model_id=MODEL_ID)#send image to RF-DETR, get predictions back
+    det = sv.Detections.from_inference(result)#convert to a Detections object
+    det = det.with_nms(threshold=0.5)#if two boxes of the same class overlap by more than 50%, it keeps the more confident one.
 
+    #builds a true/false for every box
     names = det.data["class_name"]
+    #it keeps a box if the cofidence is at least 0.5 and it's not a circle box or the confidence is at least 0.7
     keep = (det.confidence >= CONFIDENCE) & (
         (names != "selected_choice") | (det.confidence >= CIRCLE_CONFIDENCE)
     )
-    return det[keep]
+    return det[keep]#returns only the boxes that are questions or circle boxes with confidence >= 0.5 or >= 0.7
 
 
 def get_question_crops(frame, det):
     """One crop per Question box, stretched to include its answers.
     Returns a list of dicts sorted top to bottom."""
-    h, w = frame.shape[:2]
+    h, w = frame.shape[:2] #image height and width
     names = det.data["class_name"]
-    questions = det[names == "Question"]
-    answers = det[names == "Answer"]
-    circles = det[names == "selected_choice"]
+    questions = det[names == "Question"] #only question rows
+    answers = det[names == "Answer"] #only answer rows
+    circles = det[names == "selected_choice"] #only circle boxes
 
     out = []
     for i in np.argsort(questions.xyxy[:, 1]):              # top to bottom

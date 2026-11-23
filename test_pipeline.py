@@ -3,6 +3,7 @@ import cv2
 from PIL import Image
 from crops import detect, get_question_crops
 from vlm import read_crop
+from check import check
 
 PROMPT_QUESTION = """You are an OCR system. Copy what is printed on the page.
 
@@ -30,4 +31,5 @@ det = detect(frame)
 for n, q in enumerate(get_question_crops(frame, det), start=1):
     info = parse_json(read_crop(to_pil(q["crop"]), PROMPT_QUESTION))
     print(f"--- crop {n} ---")
-    print(info)
+    print("read: ", info)
+    print("checked: ", check(info, []))
