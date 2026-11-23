@@ -27,9 +27,20 @@ def parse_json(text):
 
 frame = cv2.imread("screenshot.png")
 det = detect(frame)
+canvas = frame.copy()
 
 for n, q in enumerate(get_question_crops(frame, det), start=1):
     info = parse_json(read_crop(to_pil(q["crop"]), PROMPT_QUESTION))
+    result = check(info, [])
     print(f"--- crop {n} ---")
     print("read: ", info)
-    print("checked: ", check(info, []))
+    print("checked: ", check(info, result))
+
+    x1, y1, x2, y2 = q["box"]
+
+    if result["correct"]:
+        cv2.putText(canvas, "CORRECT", (x2 - 200, y1 + 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 200, 0), 3)
+    else:
+        cv2.putText(frame, "X", (x2 - 60, y1 + 50), cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 0, 255), 4)
+        cv2.putText(canvas, result["hint"], (x1, y2 + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+
