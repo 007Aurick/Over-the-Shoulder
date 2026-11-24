@@ -48,7 +48,7 @@ while True:
     cv2.imshow("Detections", annotated)
     key = cv2.waitKey(1) & 0xFF
     if key == ord("s"):
-        cv2.imwrite("screenshot.png", frame)
+        cv2.imwrite("screenshot_sa.png", frame)
         print("Screenshot saved")
     if key == ord("q"):
         break
