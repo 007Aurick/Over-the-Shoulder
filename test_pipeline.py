@@ -34,13 +34,18 @@ for n, q in enumerate(get_question_crops(frame, det), start=1):
     result = check(info, [])
     print(f"--- crop {n} ---")
     print("read: ", info)
-    print("checked: ", check(info, result))
+    print("checked: ", result)
 
     x1, y1, x2, y2 = q["box"]
+    mark_x = max(10, x1-70)
+    mark_y = y1 + 55
 
     if result["correct"]:
-        cv2.putText(canvas, "CORRECT", (x2 - 200, y1 + 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 200, 0), 3)
+        cv2.putText(canvas, "CORRECT", (mark_x, mark_y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 200, 0), 3)
     else:
-        cv2.putText(frame, "X", (x2 - 60, y1 + 50), cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 0, 255), 4)
-        cv2.putText(canvas, result["hint"], (x1, y2 + 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+        cv2.putText(canvas, "X", (mark_x, mark_y), cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 0, 255), 4)
+        hint_y = min(y2 + 30, canvas.shape[0] - 15)
+        cv2.putText(canvas, result["hint"], (x1, hint_y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
+cv2.imwrite("result.png", canvas)
+print("result.png saved")
