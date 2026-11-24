@@ -37,15 +37,19 @@ for n, q in enumerate(get_question_crops(frame, det), start=1):
     print("checked: ", result)
 
     x1, y1, x2, y2 = q["box"]
-    mark_x = max(10, x1-70)
-    mark_y = y1 + 55
+    mark_x = max(10, x1)
+    mark_y = max(40, y1 + 10)
 
     if result["correct"]:
-        cv2.putText(canvas, "CORRECT", (mark_x, mark_y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 200, 0), 3)
+        cv2.putText(canvas, "OK", (mark_x, mark_y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 200, 0), 3)
     else:
         cv2.putText(canvas, "X", (mark_x, mark_y), cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 0, 255), 4)
-        hint_y = min(y2 + 30, canvas.shape[0] - 15)
-        cv2.putText(canvas, result["hint"], (x1, hint_y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+        hint = result["hint"].replace("–", "-").replace("—", "-").replace("’", "'")
+        hint = hint.encode("ascii", "ignore").decode()
+        hint_y = min(y2, canvas.shape[0] - 45)                    # keep the box on screen
+        cv2.rectangle(canvas, (x1, hint_y), (x1 + 900, hint_y + 40), (0, 0, 180), -1)
+        cv2.putText(canvas, result["hint"], (x1 + 10, hint_y + 28),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
 
 cv2.imwrite("result.png", canvas)
 print("result.png saved")
