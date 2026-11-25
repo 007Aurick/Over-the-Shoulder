@@ -1,1 +1,8 @@
 .env
+__pycache__/
+crop_*.jpg
+detections.jpg
+sa_sent.jpg
+screenshot*.png
+result*.png
+plate.jpg
