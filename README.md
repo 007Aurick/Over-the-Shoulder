@@ -8,8 +8,6 @@ A webcam over your desk watches you solve exam questions by hand. A custom **RF-
   <img src="assets/demo.gif" alt="Over the Shoulder demo: circle an answer, get graded live" width="800">
 </p>
 
-> 🎥 **Full demo video:** _(link your tweet or upload the MP4 here)_
-
 ---
 
 ## What it does
