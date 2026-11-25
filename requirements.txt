@@ -1,0 +1,10 @@
+opencv-python
+numpy
+supervision
+inference-sdk
+openai
+python-dotenv
+pillow
+
+# only needed for the local Qwen prototype (vlm.py / test_pipeline.py)
+# torch, torchvision (CUDA build), transformers, accelerate, bitsandbytes, qwen-vl-utils
